@@ -51,6 +51,13 @@ export interface PortfolioStoreActions {
   ) => void;
   resetPortfolio: () => void;
 
+  /**
+   * AI가 반환한 결과 JSON을 통째로 받아 state를 초기화한다.
+   * portfolioTemplate + portfolioContent 둘 다 포함된 AI 응답 전체를 넘기면 되고,
+   * portfolioContent가 없으면 template의 blocks를 순회해 빈 값으로 자동 생성한다.
+   */
+  loadFromAI: (aiResponse: AIPortfolioResponse) => void;
+
   // ── 블록 조작 ──
   addBlock: (
     blockType: BlockType,
@@ -157,6 +164,40 @@ function computeRenderMeta(
 }
 
 // ─────────────────────────────────────────
+// AI 응답 타입
+// 프로젝트 제안서의 "Frontend Renderer에 최종 반환" 구조와 동일
+// ─────────────────────────────────────────
+
+export interface AIPortfolioResponse {
+  /** AI가 생성한 포트폴리오 구조 */
+  portfolioTemplate: PortfolioTemplate;
+  /** AI가 생성한 초기 콘텐츠 값. 없으면 자동 생성 */
+  portfolioContent?: PortfolioContentDocument;
+  /** 렌더링 메타 (있으면 그대로 사용, 없으면 재계산) */
+  renderMeta?: RenderMeta;
+}
+
+// ─────────────────────────────────────────
+// 유틸: template.blocks에서 빈 content 자동 생성
+// portfolioContent가 없을 때 fallback으로 사용
+// ─────────────────────────────────────────
+
+function extractContentFromTemplate(
+  template: PortfolioTemplate
+): PortfolioContentDocument {
+  return {
+    templateId: template.id,
+    values: template.blocks
+      .filter((b) => b.category === "template") // layout 블록은 content 불필요
+      .map((b) => ({
+        blockId: b.id,
+        type: b.type,
+        value: {} as never,
+      })),
+  };
+}
+
+// ─────────────────────────────────────────
 // 유틸: 새 블록 기본 객체 생성
 // ─────────────────────────────────────────
 
@@ -196,7 +237,7 @@ function createDefaultBlock(type: BlockType, order: number): AnyBlock {
 
 export const usePortfolioStore = create<PortfolioStore>()(
   temporal(
-    immer((set, get) => ({
+    immer((set) => ({
       ...initialState,
 
       // ── 초기화 ──
@@ -207,6 +248,44 @@ export const usePortfolioStore = create<PortfolioStore>()(
           state.renderMeta = computeRenderMeta(template, content);
           state.previewMode = template.previewMode ?? "template";
           state.isDirty = false;
+        });
+      },
+
+      // ── AI 응답 JSON 통째로 로드 ──
+      loadFromAI: (aiResponse) => {
+        set((state) => {
+          const { portfolioTemplate, portfolioContent, renderMeta } = aiResponse;
+
+          // content가 없으면 template 기반으로 빈 값 자동 생성
+          const content =
+            portfolioContent ?? extractContentFromTemplate(portfolioTemplate);
+
+          // templateId 불일치 보정
+          if (content.templateId !== portfolioTemplate.id) {
+            content.templateId = portfolioTemplate.id;
+          }
+
+          // template에는 있는데 content.values에 없는 블록은 빈 값으로 채워줌
+          const existingIds = new Set(content.values.map((v) => v.blockId));
+          for (const block of portfolioTemplate.blocks) {
+            if (block.category === "template" && !existingIds.has(block.id)) {
+              content.values.push({
+                blockId: block.id,
+                type: block.type,
+                value: {} as never,
+              });
+            }
+          }
+
+          state.template   = portfolioTemplate;
+          state.content    = content;
+          state.renderMeta = renderMeta ?? computeRenderMeta(portfolioTemplate, content);
+          state.previewMode = portfolioTemplate.previewMode ?? "template";
+
+          // UI 상태 초기화
+          state.selectedBlockId   = null;
+          state.settingsPanelOpen = false;
+          state.isDirty           = false;
         });
       },
 
