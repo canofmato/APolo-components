@@ -91,6 +91,11 @@ export interface DateRange {
   isCurrent?: boolean;
 }
 
+export interface TroubleshootingItem {
+  problem: string;
+  solution: string;
+}
+
 export interface ProjectBlockValue {
   title: string;
   summary?: string;
@@ -99,6 +104,7 @@ export interface ProjectBlockValue {
   techStack?: string[];
   links?: LinkItem[];
   thumbnail?: string;
+  troubleshooting?: TroubleshootingItem[];
 }
 
 // ─────────────────────────────────────────

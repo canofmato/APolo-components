@@ -205,6 +205,23 @@ export function ProjectBlockView({
             ))}
           </div>
         )}
+        {value.troubleshooting && value.troubleshooting.length > 0 && (
+          <div className="block-project-troubleshooting">
+            <p className="block-project-troubleshooting-title">트러블슈팅</p>
+            {value.troubleshooting.map((item, i) => (
+              <div key={i} className="block-project-trouble-item">
+                <p className="block-project-trouble-problem">
+                  <span className="block-project-trouble-label">문제</span>
+                  {item.problem}
+                </p>
+                <p className="block-project-trouble-solution">
+                  <span className="block-project-trouble-label">해결</span>
+                  {item.solution}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
