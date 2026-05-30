@@ -34,7 +34,7 @@ const ADDABLE_BLOCK_TYPES: BlockType[] = [
 interface BlockPickerMenuProps {
   onSelect: (type: BlockType) => void;
   onClose: () => void;
-  anchorRef: React.RefObject<HTMLDivElement>;
+  anchorRef: React.RefObject<HTMLDivElement | null>;
 }
 
 function BlockPickerMenu({
@@ -154,7 +154,7 @@ export function DropZone({
       ref={containerRef}
       className={[
         "drop-zone",
-        isVisible ? "drop-zone--visible" : "drop-zone--hidden",
+        isVisible ? "drop-zone--visible" : "",
         isOver ? "drop-zone--over" : "",
         pickerOpen ? "drop-zone--active" : "",
       ]
@@ -202,3 +202,4 @@ export function DropZone({
 }
 
 export default DropZone;
+

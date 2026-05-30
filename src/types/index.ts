@@ -8,3 +8,4 @@ export * from "./template-blocks.types";
 export * from "./portfolio.types";
 export * from "./agent-command.types";
 export * from "./block-registry";
+export * from "./block-default-fields";

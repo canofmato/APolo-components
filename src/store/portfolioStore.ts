@@ -18,6 +18,7 @@ import type {
 import type { PreviewMode, BlockLayout, BlockStyle } from "../types/block.types";
 import type { BlockType } from "../types/block.types";
 import { BLOCK_REGISTRY } from "../types/block-registry";
+import { injectDefaultFields } from "../types/block-default-fields";
 import { getRootBlocks } from "../types/portfolio.types";
 
 // ─────────────────────────────────────────
@@ -276,6 +277,9 @@ export const usePortfolioStore = create<PortfolioStore>()(
               });
             }
           }
+
+          // fields 없는 블록에 기본 fields 자동 주입
+          portfolioTemplate.blocks = portfolioTemplate.blocks.map(injectDefaultFields) as typeof portfolioTemplate.blocks;
 
           state.template   = portfolioTemplate;
           state.content    = content;

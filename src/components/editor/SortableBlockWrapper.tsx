@@ -1,8 +1,6 @@
 // ============================================================
 // APolo Portfolio - SortableBlockWrapper
 // dnd-kit 기반 블록 드래그 정렬 래퍼
-//
-// 의존성: @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
 // ============================================================
 
 import React from "react";
@@ -19,17 +17,15 @@ import {
   KeyboardSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
-  DragStartEvent,
   DragOverlay,
 } from "@dnd-kit/core";
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import type { AnyBlock } from "../../types/portfolio.types";
 
 // ─────────────────────────────────────────
 // SortableBlockItem
-// 단일 블록을 sortable로 래핑
 // ─────────────────────────────────────────
 
 interface SortableBlockItemProps {
@@ -73,7 +69,6 @@ export function SortableBlockItem({
       data-block-id={blockId}
       {...attributes}
     >
-      {/* 드래그 핸들 — data-drag-handle 속성을 가진 요소에만 드래그 바인딩 */}
       <DragHandle listeners={listeners} />
       {children}
     </div>
@@ -82,7 +77,6 @@ export function SortableBlockItem({
 
 // ─────────────────────────────────────────
 // DragHandle
-// BlockToolbar 내의 드래그 핸들에 리스너 전달
 // ─────────────────────────────────────────
 
 function DragHandle({
@@ -102,26 +96,19 @@ function DragHandle({
 }
 
 // ─────────────────────────────────────────
-// SortableBlockList Props
+// SortableBlockList
 // ─────────────────────────────────────────
 
 interface SortableBlockListProps {
   blocks: AnyBlock[];
-  /** 드래그 완료 후 새 순서의 block ID 배열 반환 */
   onReorder: (newOrderIds: string[]) => void;
-  /** 현재 드래그 중인 블록 ID */
   activeBlockId?: string | null;
   onDragStart?: (blockId: string) => void;
   onDragEnd?: () => void;
   disabled?: boolean;
   children: (block: AnyBlock, index: number) => React.ReactNode;
-  /** DragOverlay에 렌더링할 컴포넌트 */
   renderOverlay?: (block: AnyBlock) => React.ReactNode;
 }
-
-// ─────────────────────────────────────────
-// SortableBlockList (메인)
-// ─────────────────────────────────────────
 
 export function SortableBlockList({
   blocks,
@@ -134,12 +121,7 @@ export function SortableBlockList({
   renderOverlay,
 }: SortableBlockListProps) {
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        // 5px 이상 움직여야 드래그 시작 (클릭과 구분)
-        distance: 5,
-      },
-    }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor)
   );
 
@@ -154,14 +136,11 @@ export function SortableBlockList({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (over && active.id !== over.id) {
       const oldIndex = blockIds.indexOf(String(active.id));
       const newIndex = blockIds.indexOf(String(over.id));
-      const newOrder = arrayMove(blockIds, oldIndex, newIndex);
-      onReorder(newOrder);
+      onReorder(arrayMove(blockIds, oldIndex, newIndex));
     }
-
     onDragEnd?.();
   };
 
@@ -191,7 +170,6 @@ export function SortableBlockList({
         </div>
       </SortableContext>
 
-      {/* 드래그 중 커서 위치에 표시되는 오버레이 */}
       <DragOverlay>
         {activeBlock && renderOverlay ? (
           <div className="sortable-drag-overlay">
@@ -201,37 +179,4 @@ export function SortableBlockList({
       </DragOverlay>
     </DndContext>
   );
-}
-
-// ─────────────────────────────────────────
-// useSortableBlocks 훅
-// 블록 배열의 순서 상태를 로컬에서 관리
-// ─────────────────────────────────────────
-
-import { useState, useCallback } from "react";
-
-interface UseSortableBlocksOptions {
-  initialBlocks: AnyBlock[];
-  onReorder?: (newOrderIds: string[]) => void;
-}
-
-export function useSortableBlocks({
-  initialBlocks,
-  onReorder,
-}: UseSortableBlocksOptions) {
-  const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
-
-  const handleReorder = useCallback(
-    (newOrderIds: string[]) => {
-      onReorder?.(newOrderIds);
-    },
-    [onReorder]
-  );
-
-  return {
-    activeBlockId,
-    onDragStart: setActiveBlockId,
-    onDragEnd: () => setActiveBlockId(null),
-    onReorder: handleReorder,
-  };
 }

@@ -5,8 +5,8 @@
 // ============================================================
 
 import React, { useEffect, useRef } from "react";
-import type { AnyBlock } from "../types/portfolio.types";
-import { BLOCK_REGISTRY } from "../types/block-registry";
+import type { AnyBlock } from "../../types/portfolio.types";
+import { BLOCK_REGISTRY } from "../../types/block-registry";
 
 // ─────────────────────────────────────────
 // Props
