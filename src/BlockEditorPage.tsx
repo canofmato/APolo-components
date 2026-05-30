@@ -99,6 +99,7 @@ function BlockListPanel() {
   const selectedBlockId = usePortfolioStore((s) => s.selectedBlockId);
   const selectBlock   = usePortfolioStore((s) => s.selectBlock);
   const openSettingsPanel = usePortfolioStore((s) => s.openSettingsPanel);
+  const removeBlock = usePortfolioStore((s) => s.removeBlock);
 
   if (!template) return (
     <aside className="editor-block-list-panel editor-block-list-panel--empty">
@@ -122,6 +123,7 @@ function BlockListPanel() {
             isSelected={selectedBlockId === block.id}
             onSelect={() => selectBlock(block.id)}
             onOpenSettings={() => openSettingsPanel(block.id)}
+            onDeleteBlock={removeBlock}
             childBlocks={
               (block.children ?? [])
                 .map((id) => template.blocks.find((b) => b.id === id))
@@ -140,6 +142,7 @@ function BlockListItem({
   isSelected,
   onSelect,
   onOpenSettings,
+  onDeleteBlock,
   childBlocks,
   allSelected,
 }: {
@@ -147,11 +150,13 @@ function BlockListItem({
   isSelected: boolean;
   onSelect: () => void;
   onOpenSettings: () => void;
+  onDeleteBlock: (blockId: string) => void;
   childBlocks: AnyBlock[];
   allSelected: string | null;
 }) {
   const registry = BLOCK_REGISTRY[block.type];
   const isHidden = block.layout?.hidden;
+  const canDelete = block.agentMeta?.canDelete ?? true;
 
   return (
     <div className="block-list-group">
@@ -170,6 +175,20 @@ function BlockListItem({
         <span className="block-list-item-id">{block.id}</span>
         {isHidden && <span className="block-list-item-hidden-badge">숨김</span>}
       </button>
+      {canDelete && (
+        <button
+          type="button"
+          className="block-list-delete-btn"
+          aria-label={`${registry.label} 블록 삭제`}
+          title="블록 삭제"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteBlock(block.id);
+          }}
+        >
+          ×
+        </button>
+      )}
       {/* children 들여쓰기 */}
       {childBlocks.length > 0 && (
         <div className="block-list-children">
@@ -180,6 +199,7 @@ function BlockListItem({
               isSelected={allSelected === child.id}
               onSelect={() => {}}
               onOpenSettings={() => {}}
+              onDeleteBlock={onDeleteBlock}
               childBlocks={[]}
               allSelected={allSelected}
             />
@@ -231,6 +251,7 @@ function EditorCanvas() {
           <p className="editor-canvas-empty-desc">
             AI JSON을 붙여넣거나 블록을 추가해서 시작하세요
           </p>
+          <DropZone onAddBlock={handleAddBlock} alwaysVisible />
         </div>
       </main>
     );

@@ -206,7 +206,7 @@ function createDefaultBlock(type: BlockType, order: number): AnyBlock {
   const entry = BLOCK_REGISTRY[type];
   const id = `${type}-${Date.now()}`;
 
-  return {
+  return normalizeBlockDefaults({
     id,
     type,
     category: entry.category,
@@ -220,7 +220,6 @@ function createDefaultBlock(type: BlockType, order: number): AnyBlock {
     style: { variant: "default", emphasis: "medium" },
     repeatable: entry.repeatable,
     props: {},
-    fields: [],
     agentMeta: {
       aliases: [type],
       canMove: true,
@@ -229,7 +228,39 @@ function createDefaultBlock(type: BlockType, order: number): AnyBlock {
       canDelete: !["hero", "contact"].includes(type),
       editableLayoutKeys: ["span", "order", "padding"],
     },
-  } as AnyBlock;
+  } as AnyBlock);
+}
+
+function normalizeBlockDefaults(block: AnyBlock): AnyBlock {
+  const entry = BLOCK_REGISTRY[block.type];
+
+  return injectDefaultFields({
+    ...block,
+    category: block.category ?? entry.category,
+    label: block.label ?? entry.label,
+    description: block.description ?? entry.description,
+    layout: {
+      span: entry.defaultLayout.span,
+      padding: entry.defaultLayout.padding,
+      ...(block.layout ?? {}),
+    },
+    style: block.style ?? { variant: "default", emphasis: "medium" },
+    repeatable: block.repeatable ?? entry.repeatable,
+    props: block.props ?? {},
+    agentMeta: {
+      aliases: block.agentMeta?.aliases ?? [block.type],
+      canMove: block.agentMeta?.canMove ?? true,
+      canResize: block.agentMeta?.canResize ?? true,
+      canHide: block.agentMeta?.canHide ?? block.type !== "hero",
+      canDelete:
+        block.agentMeta?.canDelete ?? !["hero", "contact"].includes(block.type),
+      editableLayoutKeys: block.agentMeta?.editableLayoutKeys ?? [
+        "span",
+        "order",
+        "padding",
+      ],
+    },
+  } as AnyBlock);
 }
 
 // ─────────────────────────────────────────
@@ -257,6 +288,9 @@ export const usePortfolioStore = create<PortfolioStore>()(
         set((state) => {
           const { portfolioTemplate, portfolioContent, renderMeta } = aiResponse;
 
+          // fields/agentMeta 없는 블록에 기본 편집 메타 자동 주입
+          portfolioTemplate.blocks = portfolioTemplate.blocks.map(normalizeBlockDefaults) as typeof portfolioTemplate.blocks;
+
           // content가 없으면 template 기반으로 빈 값 자동 생성
           const content =
             portfolioContent ?? extractContentFromTemplate(portfolioTemplate);
@@ -278,9 +312,6 @@ export const usePortfolioStore = create<PortfolioStore>()(
             }
           }
 
-          // fields 없는 블록에 기본 fields 자동 주입
-          portfolioTemplate.blocks = portfolioTemplate.blocks.map(injectDefaultFields) as typeof portfolioTemplate.blocks;
-
           state.template   = portfolioTemplate;
           state.content    = content;
           state.renderMeta = renderMeta ?? computeRenderMeta(portfolioTemplate, content);
@@ -300,15 +331,31 @@ export const usePortfolioStore = create<PortfolioStore>()(
       // ── 블록 추가 ──
       addBlock: (blockType, afterBlockId, parentBlockId) => {
         set((state) => {
-          if (!state.template) return;
+          if (!state.template) {
+            const templateId = `tpl-${Date.now()}`;
+            state.template = {
+              id: templateId,
+              title: "Untitled Portfolio",
+              version: 1,
+              previewMode: "template",
+              blocks: [],
+            };
+            state.content = {
+              templateId,
+              values: [],
+            };
+            state.previewMode = "template";
+          }
 
           const blocks = state.template.blocks;
 
           // order 결정: afterBlockId 다음 or 맨 끝
-          let insertOrder = blocks.length;
+          let insertOrder = 0;
           if (afterBlockId) {
             const target = blocks.find((b) => b.id === afterBlockId);
             if (target) insertOrder = (target.layout.order ?? 0) + 1;
+          } else if (parentBlockId) {
+            insertOrder = blocks.length;
           }
 
           // 새 블록 생성
@@ -331,14 +378,17 @@ export const usePortfolioStore = create<PortfolioStore>()(
             }
           }
 
-          // 콘텐츠 초기값 추가
-          state.content?.values.push({
-            blockId: newBlock.id,
-            type: blockType,
-            value: {} as never,
-          });
+          // 콘텐츠 초기값 추가: layout 블록은 별도 content가 필요 없음
+          if (newBlock.category === "template") {
+            state.content?.values.push({
+              blockId: newBlock.id,
+              type: blockType,
+              value: {} as never,
+            });
+          }
 
           state.renderMeta = computeRenderMeta(state.template, state.content!);
+          state.selectedBlockId = newBlock.id;
           state.isDirty = true;
         });
       },
@@ -348,7 +398,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
         set((state) => {
           if (!state.template) return;
           const block = state.template.blocks.find((b) => b.id === blockId);
-          if (!block?.agentMeta?.canDelete) return;
+          if (!block || !(block.agentMeta?.canDelete ?? true)) return;
 
           // 블록 및 하위 블록 모두 제거
           const idsToRemove = new Set<string>([blockId]);

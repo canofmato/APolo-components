@@ -1112,8 +1112,8 @@ input, textarea, select {
   box-shadow: var(--shadow-md);
 }
 
-.block-wrapper--selected .block-toolbar,
-.block-wrapper:hover .block-toolbar {
+.editor-block-slot--selected > .block-toolbar,
+.editor-block-slot:hover > .block-toolbar {
   opacity: 1;
   pointer-events: all;
 }
@@ -2209,6 +2209,7 @@ input, textarea, select {
 
 .block-list-group {
   margin-bottom: 1px;
+  position: relative;
 }
 
 .block-list-item {
@@ -2216,7 +2217,7 @@ input, textarea, select {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-3);
+  padding: var(--sp-2) 34px var(--sp-2) var(--sp-3);
   border-radius: var(--radius-md);
   text-align: left;
   transition: background var(--transition-fast);
@@ -2269,6 +2270,33 @@ input, textarea, select {
   border-radius: var(--radius-sm);
   margin-left: auto;
   flex-shrink: 0;
+}
+
+.block-list-delete-btn {
+  position: absolute;
+  top: 50%;
+  right: var(--sp-2);
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-tertiary);
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.block-list-group:hover > .block-list-delete-btn,
+.block-list-item--selected + .block-list-delete-btn,
+.block-list-delete-btn:focus-visible {
+  opacity: 1;
+}
+
+.block-list-delete-btn:hover {
+  background: rgba(255, 93, 93, 0.12);
+  color: #ff7a7a;
 }
 
 .block-list-children {
