@@ -91,9 +91,7 @@ export const BLOCK_DEFAULT_FIELDS: Partial<Record<BlockType, BlockField[]>> = {
   gallery: [
     { key: "title", label: "작업물 제목", input: "text", group: "content", placeholder: "작업물 제목", validation: { required: true } },
     { key: "description", label: "작업 설명", input: "textarea", group: "content", placeholder: "컨셉, 역할, 결과를 간략히 작성" },
-    { key: "mainImage", label: "대표 이미지", input: "imageUpload", group: "content" },
-    { key: "subImage1", label: "보조 이미지 1", input: "imageUpload", group: "content" },
-    { key: "subImage2", label: "보조 이미지 2", input: "imageUpload", group: "content" },
+    { key: "images", label: "갤러리 이미지", input: "imageList", group: "content", helperText: "작업물 이미지를 필요한 만큼 추가할 수 있습니다." },
     { key: "alt", label: "이미지 설명", input: "text", group: "content", placeholder: "작업물 이미지 설명" },
     { key: "caption", label: "캡션", input: "text", group: "content", placeholder: "이미지 하단 설명" },
   ],
@@ -106,6 +104,36 @@ export const BLOCK_DEFAULT_FIELDS: Partial<Record<BlockType, BlockField[]>> = {
     { key: "cause", label: "원인", input: "textarea", group: "content", placeholder: "분석한 원인" },
     { key: "solution", label: "해결", input: "textarea", group: "content", placeholder: "적용한 해결 방법" },
     { key: "result", label: "결과", input: "textarea", group: "content", placeholder: "개선 결과 또는 배운 점" },
+  ],
+
+  // ─── Process ───
+  process: [
+    { key: "title", label: "과정 제목", input: "text", group: "content", placeholder: "예: Brand Identity Design Process", validation: { required: true } },
+    { key: "overview", label: "개요", input: "textarea", group: "content", placeholder: "프로젝트가 어떤 흐름으로 진행되었는지 요약" },
+    { key: "research", label: "리서치", input: "textarea", group: "content", placeholder: "사용자/시장/레퍼런스 조사 내용" },
+    { key: "direction", label: "방향 설정", input: "textarea", group: "content", placeholder: "컨셉, 디자인 방향, 의사결정 기준" },
+    { key: "execution", label: "실행", input: "textarea", group: "content", placeholder: "시안 제작, 구현, 반복 개선 과정" },
+    { key: "outcome", label: "결과", input: "textarea", group: "content", placeholder: "최종 결과와 배운 점" },
+  ],
+
+  // ─── Architecture ───
+  architecture: [
+    { key: "title", label: "구조 제목", input: "text", group: "content", placeholder: "예: 서비스 아키텍처", validation: { required: true } },
+    { key: "summary", label: "요약", input: "textarea", group: "content", placeholder: "전체 구조를 간단히 설명" },
+    { key: "frontend", label: "프론트엔드", input: "textarea", group: "content", placeholder: "화면, 상태관리, 라우팅, API 연동 구조" },
+    { key: "backend", label: "백엔드", input: "textarea", group: "content", placeholder: "API 서버, 인증, 비즈니스 로직 구조" },
+    { key: "database", label: "데이터/저장소", input: "textarea", group: "content", placeholder: "DB, 스토리지, 주요 데이터 흐름" },
+    { key: "deployment", label: "배포", input: "textarea", group: "content", placeholder: "배포 환경, CI/CD, 운영 방식" },
+    { key: "diagramImage", label: "구조 이미지", input: "imageUpload", group: "content" },
+  ],
+
+  // ─── Metric ───
+  metric: [
+    { key: "title", label: "성과 제목", input: "text", group: "content", placeholder: "예: 사용성 개선 결과", validation: { required: true } },
+    { key: "value", label: "대표 수치", input: "text", group: "content", placeholder: "예: 32%" },
+    { key: "label", label: "수치 설명", input: "text", group: "content", placeholder: "예: 작업 시간 단축" },
+    { key: "description", label: "설명", input: "textarea", group: "content", placeholder: "성과가 어떤 의미인지 설명" },
+    { key: "evidence", label: "근거", input: "textarea", group: "content", placeholder: "측정 방식, 테스트 결과, 피드백 등" },
   ],
 };
 

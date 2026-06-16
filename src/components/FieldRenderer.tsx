@@ -588,6 +588,88 @@ function ImageUploadInput({
   );
 }
 
+function ImageListInput({
+  field,
+  value,
+  onChange,
+  disabled,
+}: {
+  field: BlockField;
+  value: string[];
+  onChange: (v: string[]) => void;
+  disabled?: boolean;
+}) {
+  const images = value ?? [];
+
+  const readFiles = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    Promise.all(
+      Array.from(files).map(
+        (file) =>
+          new Promise<string | null>((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () =>
+              resolve(typeof reader.result === "string" ? reader.result : null);
+            reader.onerror = () => resolve(null);
+            reader.readAsDataURL(file);
+          })
+      )
+    ).then((results) => {
+      const next = results.filter((item): item is string => Boolean(item));
+      if (next.length > 0) onChange([...images, ...next]);
+    });
+  };
+
+  const remove = (index: number) => {
+    onChange(images.filter((_, i) => i !== index));
+  };
+
+  return (
+    <div className="field-image-list">
+      {images.length > 0 && (
+        <div className="field-image-list-grid">
+          {images.map((image, index) => (
+            <div key={`${image}-${index}`} className="field-image-list-item">
+              <img
+                src={image}
+                alt={`gallery ${index + 1}`}
+                className="field-image-list-thumb"
+              />
+              <button
+                type="button"
+                className="field-image-list-remove"
+                disabled={disabled || field.disabled}
+                onClick={() => remove(index)}
+              >
+                제거
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      <label
+        className={`field-image-list-add ${
+          disabled || field.disabled ? "disabled" : ""
+        }`}
+      >
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          className="sr-only"
+          disabled={disabled || field.disabled}
+          onChange={(e) => {
+            readFiles(e.target.files);
+            e.currentTarget.value = "";
+          }}
+        />
+        + 이미지 추가
+      </label>
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────
 // FieldRenderer (메인 분기)
 // ─────────────────────────────────────────
@@ -712,6 +794,16 @@ export function FieldRenderer({
           <ImageUploadInput
             field={field}
             value={value as string}
+            onChange={handleChange}
+            disabled={disabled || readOnly}
+          />
+        );
+
+      case "imageList":
+        return (
+          <ImageListInput
+            field={field}
+            value={value as string[]}
             onChange={handleChange}
             disabled={disabled || readOnly}
           />

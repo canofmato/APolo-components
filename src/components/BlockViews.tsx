@@ -17,6 +17,9 @@ import type {
   PaperBlockValue,
   GalleryBlockValue,
   TroubleshootingBlockValue,
+  ProcessBlockValue,
+  ArchitectureBlockValue,
+  MetricBlockValue,
   LinkItem,
   DateRange,
 } from "../types/template-blocks.types";
@@ -30,6 +33,9 @@ import type {
   PaperBlockProps,
   GalleryBlockProps,
   TroubleshootingBlockProps,
+  ProcessBlockProps,
+  ArchitectureBlockProps,
+  MetricBlockProps,
 } from "../types/template-blocks.types";
 
 // ─────────────────────────────────────────
@@ -479,9 +485,12 @@ export function GalleryBlockView({
   value: GalleryBlockValue;
   props?: GalleryBlockProps;
 }) {
-  const images = [value.mainImage, value.subImage1, value.subImage2].filter(
-    Boolean
-  ) as string[];
+  const images =
+    value.images && value.images.length > 0
+      ? value.images
+      : ([value.mainImage, value.subImage1, value.subImage2].filter(
+          Boolean
+        ) as string[]);
   const [activeIndex, setActiveIndex] = useState(0);
   const activeImage = images[activeIndex] ?? images[0];
   const isCarousel = props?.layout === "carousel";
@@ -606,5 +615,135 @@ export function TroubleshootingBlockView({
         ))}
       </div>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────
+// ProcessBlockView
+// ─────────────────────────────────────────
+
+export function ProcessBlockView({
+  value,
+  props,
+}: {
+  value: ProcessBlockValue;
+  props?: ProcessBlockProps;
+}) {
+  const steps = [
+    ["Research", value.research],
+    ["Direction", value.direction],
+    ["Execution", value.execution],
+    ["Outcome", value.outcome],
+  ].filter(([, body]) => body);
+  const layoutClass =
+    props?.layout === "stack" ? "block-process--stack" : "block-process--timeline";
+
+  return (
+    <section className={`block-view block-process ${layoutClass}`}>
+      <div className="block-process-header">
+        {value.title && <h3 className="block-process-title">{value.title}</h3>}
+        {value.overview && (
+          <p className="block-process-overview">{value.overview}</p>
+        )}
+      </div>
+      {steps.length > 0 && (
+        <div className="block-process-steps">
+          {steps.map(([label, body], index) => (
+            <article key={label} className="block-process-step">
+              <span className="block-process-index">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h4 className="block-process-label">{label}</h4>
+                <p className="block-process-body">{body}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────
+// ArchitectureBlockView
+// ─────────────────────────────────────────
+
+export function ArchitectureBlockView({
+  value,
+  props,
+}: {
+  value: ArchitectureBlockValue;
+  props?: ArchitectureBlockProps;
+}) {
+  const layers = [
+    ["Frontend", value.frontend],
+    ["Backend", value.backend],
+    ["Data", value.database],
+    ["Deployment", value.deployment],
+  ].filter(([, body]) => body);
+  const shouldShowDiagram = props?.showDiagram !== false && value.diagramImage;
+
+  return (
+    <section className="block-view block-architecture">
+      <div className="block-architecture-copy">
+        {value.title && (
+          <h3 className="block-architecture-title">{value.title}</h3>
+        )}
+        {value.summary && (
+          <p className="block-architecture-summary">{value.summary}</p>
+        )}
+      </div>
+      {shouldShowDiagram && (
+        <img
+          src={value.diagramImage}
+          alt={value.title || "architecture diagram"}
+          className="block-architecture-diagram"
+        />
+      )}
+      {layers.length > 0 && (
+        <div className="block-architecture-layers">
+          {layers.map(([label, body]) => (
+            <article key={label} className="block-architecture-layer">
+              <h4>{label}</h4>
+              <p>{body}</p>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────
+// MetricBlockView
+// ─────────────────────────────────────────
+
+export function MetricBlockView({
+  value,
+  props,
+}: {
+  value: MetricBlockValue;
+  props?: MetricBlockProps;
+}) {
+  const displayClass =
+    props?.emphasis === "compact" ? "block-metric--compact" : "block-metric--single";
+
+  return (
+    <section className={`block-view block-metric ${displayClass}`}>
+      <div className="block-metric-main">
+        {value.value && <strong className="block-metric-value">{value.value}</strong>}
+        {value.label && <span className="block-metric-label">{value.label}</span>}
+      </div>
+      <div className="block-metric-copy">
+        {value.title && <h3 className="block-metric-title">{value.title}</h3>}
+        {value.description && (
+          <p className="block-metric-description">{value.description}</p>
+        )}
+        {value.evidence && (
+          <p className="block-metric-evidence">{value.evidence}</p>
+        )}
+      </div>
+    </section>
   );
 }

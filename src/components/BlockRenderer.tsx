@@ -19,6 +19,9 @@ import {
   isPaperBlock,
   isGalleryBlock,
   isTroubleshootingBlock,
+  isProcessBlock,
+  isArchitectureBlock,
+  isMetricBlock,
   isSectionBlock,
   isColumnsBlock,
 } from "../types/block-registry";
@@ -34,6 +37,9 @@ import {
   PaperBlockView,
   GalleryBlockView,
   TroubleshootingBlockView,
+  ProcessBlockView,
+  ArchitectureBlockView,
+  MetricBlockView,
 } from "./BlockViews";
 import { FieldRenderer } from "./FieldRenderer";
 
@@ -155,6 +161,17 @@ function FilledBlockView({
     return (
       <TroubleshootingBlockView value={value as never} props={block.props} />
     );
+  }
+  if (isProcessBlock(block)) {
+    return <ProcessBlockView value={value as never} props={block.props} />;
+  }
+  if (isArchitectureBlock(block)) {
+    return (
+      <ArchitectureBlockView value={value as never} props={block.props} />
+    );
+  }
+  if (isMetricBlock(block)) {
+    return <MetricBlockView value={value as never} props={block.props} />;
   }
 
   return null;

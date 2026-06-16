@@ -259,6 +259,7 @@ export interface GalleryBlock extends BaseBlock {
 export interface GalleryBlockValue {
   title: string;
   description?: string;
+  images?: string[];
   mainImage?: string;
   subImage1?: string;
   subImage2?: string;
@@ -291,6 +292,78 @@ export interface TroubleshootingBlockValue {
 }
 
 // ─────────────────────────────────────────
+// Process Block
+// ─────────────────────────────────────────
+
+export interface ProcessBlockProps {
+  layout?: "timeline" | "stack";
+}
+
+export interface ProcessBlock extends BaseBlock {
+  type: "process";
+  category: "template";
+  repeatable: true;
+  props: ProcessBlockProps;
+}
+
+export interface ProcessBlockValue {
+  title: string;
+  overview?: string;
+  research?: string;
+  direction?: string;
+  execution?: string;
+  outcome?: string;
+}
+
+// ─────────────────────────────────────────
+// Architecture Block
+// ─────────────────────────────────────────
+
+export interface ArchitectureBlockProps {
+  showDiagram?: boolean;
+}
+
+export interface ArchitectureBlock extends BaseBlock {
+  type: "architecture";
+  category: "template";
+  repeatable: true;
+  props: ArchitectureBlockProps;
+}
+
+export interface ArchitectureBlockValue {
+  title: string;
+  summary?: string;
+  frontend?: string;
+  backend?: string;
+  database?: string;
+  deployment?: string;
+  diagramImage?: string;
+}
+
+// ─────────────────────────────────────────
+// Metric Block
+// ─────────────────────────────────────────
+
+export interface MetricBlockProps {
+  emphasis?: "single" | "compact";
+}
+
+export interface MetricBlock extends BaseBlock {
+  type: "metric";
+  category: "template";
+  repeatable: true;
+  props: MetricBlockProps;
+}
+
+export interface MetricBlockValue {
+  title: string;
+  value?: string;
+  label?: string;
+  description?: string;
+  evidence?: string;
+}
+
+// ─────────────────────────────────────────
 // Template Block Union
 // ─────────────────────────────────────────
 
@@ -305,7 +378,10 @@ export type TemplateBlock =
   | ImageBlock
   | PaperBlock
   | GalleryBlock
-  | TroubleshootingBlock;
+  | TroubleshootingBlock
+  | ProcessBlock
+  | ArchitectureBlock
+  | MetricBlock;
 
 // ─────────────────────────────────────────
 // Block Value Union
@@ -323,7 +399,10 @@ export type BlockValue =
   | ImageBlockValue
   | PaperBlockValue
   | GalleryBlockValue
-  | TroubleshootingBlockValue;
+  | TroubleshootingBlockValue
+  | ProcessBlockValue
+  | ArchitectureBlockValue
+  | MetricBlockValue;
 
 // 블록 타입 → 값 타입 매핑 (유틸리티)
 export interface BlockValueMap {
@@ -338,4 +417,7 @@ export interface BlockValueMap {
   paper: PaperBlockValue;
   gallery: GalleryBlockValue;
   troubleshooting: TroubleshootingBlockValue;
+  process: ProcessBlockValue;
+  architecture: ArchitectureBlockValue;
+  metric: MetricBlockValue;
 }

@@ -25,7 +25,10 @@ export type BlockType =
   | "image"
   | "paper"
   | "gallery"
-  | "troubleshooting";
+  | "troubleshooting"
+  | "process"
+  | "architecture"
+  | "metric";
 
 export type FieldInputType =
   // 기본 입력
@@ -42,6 +45,7 @@ export type FieldInputType =
   | "link"
   | "linkList"
   | "imageUpload"
+  | "imageList"
   | "repeater";
 
 export type FieldGroup = "content" | "setting";

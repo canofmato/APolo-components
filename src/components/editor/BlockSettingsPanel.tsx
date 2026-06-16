@@ -355,6 +355,59 @@ function PropsSection({
         </SettingSection>
       );
 
+    case "process":
+      return (
+        <SettingSection title="Process 설정">
+          <SettingRow label="표시 방식">
+            <div className="settings-segmented">
+              {(["timeline", "stack"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  className={`settings-seg-btn ${props.layout === mode ? "active" : ""}`}
+                  onClick={() => update("layout", mode)}
+                >
+                  {mode === "timeline" ? "타임라인" : "스택"}
+                </button>
+              ))}
+            </div>
+          </SettingRow>
+        </SettingSection>
+      );
+
+    case "architecture":
+      return (
+        <SettingSection title="Architecture 설정">
+          <SettingRow label="구조 이미지 표시">
+            <input
+              type="checkbox"
+              checked={props.showDiagram !== false}
+              onChange={(e) => update("showDiagram", e.target.checked)}
+            />
+          </SettingRow>
+        </SettingSection>
+      );
+
+    case "metric":
+      return (
+        <SettingSection title="Metric 설정">
+          <SettingRow label="표시 방식">
+            <div className="settings-segmented">
+              {(["single", "compact"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  className={`settings-seg-btn ${props.emphasis === mode ? "active" : ""}`}
+                  onClick={() => update("emphasis", mode)}
+                >
+                  {mode === "single" ? "크게" : "컴팩트"}
+                </button>
+              ))}
+            </div>
+          </SettingRow>
+        </SettingSection>
+      );
+
     case "section":
       return (
         <SettingSection title="Section 설정">

@@ -21,6 +21,9 @@ import type {
   PaperBlock,
   GalleryBlock,
   TroubleshootingBlock,
+  ProcessBlock,
+  ArchitectureBlock,
+  MetricBlock,
 } from "./template-blocks.types";
 import type { AnyBlock } from "./portfolio.types";
 
@@ -181,6 +184,33 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     allowsChildren: false,
     defaultLayout: { span: 12, padding: 24 },
   },
+  process: {
+    type: "process",
+    category: "template",
+    label: "Process",
+    description: "리서치, 방향 설정, 실행, 결과 등 작업 과정을 정리하는 영역",
+    repeatable: true,
+    allowsChildren: false,
+    defaultLayout: { span: 12, padding: 24 },
+  },
+  architecture: {
+    type: "architecture",
+    category: "template",
+    label: "Architecture",
+    description: "서비스 구조, 프론트엔드/백엔드/배포 구성을 설명하는 영역",
+    repeatable: true,
+    allowsChildren: false,
+    defaultLayout: { span: 12, padding: 24 },
+  },
+  metric: {
+    type: "metric",
+    category: "template",
+    label: "Metric",
+    description: "성과, 수치, 개선 결과를 강조하는 영역",
+    repeatable: true,
+    allowsChildren: false,
+    defaultLayout: { span: 12, padding: 24 },
+  },
 };
 
 // ─────────────────────────────────────────
@@ -247,6 +277,20 @@ export function isTroubleshootingBlock(
   block: AnyBlock
 ): block is TroubleshootingBlock {
   return block.type === "troubleshooting";
+}
+
+export function isProcessBlock(block: AnyBlock): block is ProcessBlock {
+  return block.type === "process";
+}
+
+export function isArchitectureBlock(
+  block: AnyBlock
+): block is ArchitectureBlock {
+  return block.type === "architecture";
+}
+
+export function isMetricBlock(block: AnyBlock): block is MetricBlock {
+  return block.type === "metric";
 }
 
 export function isLayoutBlock(block: AnyBlock): boolean {
