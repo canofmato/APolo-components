@@ -44,9 +44,10 @@ function App() {
           style={{
             position: 'fixed', bottom: 20, right: 20, zIndex: 9999,
             padding: '8px 14px',
-            background: '#242424', border: '1px solid #444',
-            borderRadius: '8px', color: '#a0a0a0',
+            background: '#ffffff', border: '1px solid #d1d5db',
+            borderRadius: '8px', color: '#374151',
             fontSize: '12px', cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(15, 23, 42, 0.1)',
           }}
         >
           ⚙ JSON 재주입
@@ -59,25 +60,26 @@ function App() {
   // ── 개발용 JSON 주입기 화면 ──
   return (
     <div style={{
-      minHeight: '100vh', background: '#0f0f0f',
+      minHeight: '100vh', background: '#f8fafc',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{
         width: '560px', padding: '32px',
-        background: '#181818', border: '1px solid #333',
+        background: '#ffffff', border: '1px solid #e5e7eb',
         borderRadius: '12px',
+        boxShadow: '0 16px 48px rgba(15, 23, 42, 0.12)',
       }}>
-        <h2 style={{ color: '#d4f57a', fontSize: '20px', fontWeight: 700, marginBottom: '4px' }}>
+        <h2 style={{ color: '#2563eb', fontSize: '20px', fontWeight: 700, marginBottom: '4px' }}>
           APolo
         </h2>
-        <p style={{ color: '#606060', fontSize: '13px', marginBottom: '20px' }}>
+        <p style={{ color: '#6b7280', fontSize: '13px', marginBottom: '20px' }}>
           AI가 생성한 JSON을 붙여넣고 에디터를 실행하세요
         </p>
         <textarea
           style={{
             width: '100%', height: '200px', padding: '12px',
-            background: '#242424', color: '#f0f0f0',
-            border: '1px solid #444', borderRadius: '8px',
+            background: '#ffffff', color: '#111827',
+            border: '1px solid #d1d5db', borderRadius: '8px',
             fontSize: '12px', fontFamily: 'monospace',
             resize: 'vertical', outline: 'none',
           }}
@@ -91,8 +93,8 @@ function App() {
           style={{
             marginTop: '12px', width: '100%',
             padding: '12px',
-            background: jsonInput.trim() ? '#d4f57a' : '#333',
-            color: jsonInput.trim() ? '#0f0f0f' : '#666',
+            background: jsonInput.trim() ? '#2563eb' : '#e5e7eb',
+            color: jsonInput.trim() ? '#ffffff' : '#9ca3af',
             border: 'none', borderRadius: '8px',
             fontSize: '14px', fontWeight: 700,
             cursor: jsonInput.trim() ? 'pointer' : 'not-allowed',

@@ -22,7 +22,10 @@ export type BlockType =
   | "experience"
   | "contact"
   | "text"
-  | "image";
+  | "image"
+  | "paper"
+  | "gallery"
+  | "troubleshooting";
 
 export type FieldInputType =
   // 기본 입력
@@ -152,7 +155,7 @@ export interface BaseBlock {
   repeatable?: boolean;
   minItems?: number;
   maxItems?: number;
-  props?: Record<string, unknown>;
+  props?: object;
   fields?: BlockField[];
   settings?: BlockField[];
   children?: string[];           // 자식 블록 ID 목록

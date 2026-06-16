@@ -3,7 +3,6 @@
 // PortfolioTemplate 전체를 받아 root 블록부터 순서대로 렌더링
 // ============================================================
 
-import React from "react";
 import type {
   PortfolioTemplate,
   PortfolioContentDocument,

@@ -20,6 +20,9 @@ const ADDABLE_BLOCK_TYPES: BlockType[] = [
   "contact",
   "text",
   "image",
+  "paper",
+  "gallery",
+  "troubleshooting",
   "section",
   "columns",
   "spacer",
@@ -202,4 +205,3 @@ export function DropZone({
 }
 
 export default DropZone;
-

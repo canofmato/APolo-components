@@ -16,6 +16,9 @@ import {
   isContactBlock,
   isTextBlock,
   isImageBlock,
+  isPaperBlock,
+  isGalleryBlock,
+  isTroubleshootingBlock,
   isSectionBlock,
   isColumnsBlock,
 } from "../types/block-registry";
@@ -28,6 +31,9 @@ import {
   ContactBlockView,
   TextBlockView,
   ImageBlockView,
+  PaperBlockView,
+  GalleryBlockView,
+  TroubleshootingBlockView,
 } from "./BlockViews";
 import { FieldRenderer } from "./FieldRenderer";
 
@@ -138,6 +144,17 @@ function FilledBlockView({
   }
   if (isImageBlock(block)) {
     return <ImageBlockView value={value as never} props={block.props} />;
+  }
+  if (isPaperBlock(block)) {
+    return <PaperBlockView value={value as never} props={block.props} />;
+  }
+  if (isGalleryBlock(block)) {
+    return <GalleryBlockView value={value as never} props={block.props} />;
+  }
+  if (isTroubleshootingBlock(block)) {
+    return (
+      <TroubleshootingBlockView value={value as never} props={block.props} />
+    );
   }
 
   return null;

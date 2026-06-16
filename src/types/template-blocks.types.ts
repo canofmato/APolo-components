@@ -215,6 +215,82 @@ export interface ImageBlockValue {
 }
 
 // ─────────────────────────────────────────
+// Paper Block
+// ─────────────────────────────────────────
+
+export interface PaperBlockProps {
+  showMeta?: boolean;
+}
+
+export interface PaperBlock extends BaseBlock {
+  type: "paper";
+  category: "template";
+  repeatable: true;
+  props: PaperBlockProps;
+}
+
+export interface PaperBlockValue {
+  title: string;
+  authors?: string;
+  venue?: string;
+  year?: string;
+  topic?: string;
+  summary?: string;
+  takeaway?: string;
+  followUpQuestion?: string;
+  link?: LinkItem | null;
+}
+
+// ─────────────────────────────────────────
+// Gallery Block
+// ─────────────────────────────────────────
+
+export interface GalleryBlockProps {
+  layout?: "grid" | "feature" | "carousel";
+}
+
+export interface GalleryBlock extends BaseBlock {
+  type: "gallery";
+  category: "template";
+  repeatable: true;
+  props: GalleryBlockProps;
+}
+
+export interface GalleryBlockValue {
+  title: string;
+  description?: string;
+  mainImage?: string;
+  subImage1?: string;
+  subImage2?: string;
+  alt?: string;
+  caption?: string;
+}
+
+// ─────────────────────────────────────────
+// Troubleshooting Block
+// ─────────────────────────────────────────
+
+export interface TroubleshootingBlockProps {
+  showResult?: boolean;
+}
+
+export interface TroubleshootingBlock extends BaseBlock {
+  type: "troubleshooting";
+  category: "template";
+  repeatable: true;
+  props: TroubleshootingBlockProps;
+}
+
+export interface TroubleshootingBlockValue {
+  title: string;
+  context?: string;
+  problem?: string;
+  cause?: string;
+  solution?: string;
+  result?: string;
+}
+
+// ─────────────────────────────────────────
 // Template Block Union
 // ─────────────────────────────────────────
 
@@ -226,7 +302,10 @@ export type TemplateBlock =
   | ExperienceBlock
   | ContactBlock
   | TextBlock
-  | ImageBlock;
+  | ImageBlock
+  | PaperBlock
+  | GalleryBlock
+  | TroubleshootingBlock;
 
 // ─────────────────────────────────────────
 // Block Value Union
@@ -241,7 +320,10 @@ export type BlockValue =
   | ExperienceBlockValue
   | ContactBlockValue
   | TextBlockValue
-  | ImageBlockValue;
+  | ImageBlockValue
+  | PaperBlockValue
+  | GalleryBlockValue
+  | TroubleshootingBlockValue;
 
 // 블록 타입 → 값 타입 매핑 (유틸리티)
 export interface BlockValueMap {
@@ -253,4 +335,7 @@ export interface BlockValueMap {
   contact: ContactBlockValue;
   text: TextBlockValue;
   image: ImageBlockValue;
+  paper: PaperBlockValue;
+  gallery: GalleryBlockValue;
+  troubleshooting: TroubleshootingBlockValue;
 }

@@ -7,8 +7,8 @@ export { BlockSettingsPanel } from "./BlockSettingsPanel";
 export {
   SortableBlockList,
   SortableBlockItem,
-  useSortableBlocks,
 } from "./SortableBlockWrapper";
+export { useSortableBlocks } from "./useSortableBlocks";
 export { DropZone } from "./DropZone";
 export { RepeaterField, StringRepeaterField } from "./RepeaterField";
 export {

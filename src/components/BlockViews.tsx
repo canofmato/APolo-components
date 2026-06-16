@@ -1,9 +1,10 @@
+import { useState } from "react";
+
 // ============================================================
 // APolo Portfolio - Block View Components (filled/preview mode)
 // 각 블록 타입의 실제 렌더링 결과물 컴포넌트
 // ============================================================
 
-import React from "react";
 import type {
   HeroBlockValue,
   ProfileBlockValue,
@@ -13,6 +14,9 @@ import type {
   ContactBlockValue,
   TextBlockValue,
   ImageBlockValue,
+  PaperBlockValue,
+  GalleryBlockValue,
+  TroubleshootingBlockValue,
   LinkItem,
   DateRange,
 } from "../types/template-blocks.types";
@@ -23,6 +27,9 @@ import type {
   SkillsBlockProps,
   ContactBlockProps,
   ImageBlockProps,
+  PaperBlockProps,
+  GalleryBlockProps,
+  TroubleshootingBlockProps,
 } from "../types/template-blocks.types";
 
 // ─────────────────────────────────────────
@@ -72,9 +79,11 @@ export function HeroBlockView({
   value: HeroBlockValue;
   props?: HeroBlockProps;
 }) {
+  const shouldShowImage = Boolean(value.heroImage);
+
   return (
     <div className="block-view block-hero">
-      {props?.showImage && value.heroImage && (
+      {shouldShowImage && (
         <div className="block-hero-image">
           <img src={value.heroImage} alt="hero" />
         </div>
@@ -406,6 +415,196 @@ export function ImageBlockView({
       {value.caption && (
         <p className="block-image-caption">{value.caption}</p>
       )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────
+// PaperBlockView
+// ─────────────────────────────────────────
+
+export function PaperBlockView({
+  value,
+  props,
+}: {
+  value: PaperBlockValue;
+  props?: PaperBlockProps;
+}) {
+  return (
+    <article className="block-view block-paper">
+      <div className="block-paper-header">
+        {value.title && <h3 className="block-paper-title">{value.title}</h3>}
+        {props?.showMeta !== false && (
+          <p className="block-paper-meta">
+            {[value.authors, value.venue, value.year].filter(Boolean).join(" · ")}
+          </p>
+        )}
+      </div>
+      {value.topic && <p className="block-paper-topic">Topic: {value.topic}</p>}
+      {value.summary && (
+        <p className="block-paper-section">
+          <span>Summary</span>
+          {value.summary}
+        </p>
+      )}
+      {value.takeaway && (
+        <p className="block-paper-section">
+          <span>Takeaway</span>
+          {value.takeaway}
+        </p>
+      )}
+      {value.followUpQuestion && (
+        <p className="block-paper-section">
+          <span>Question</span>
+          {value.followUpQuestion}
+        </p>
+      )}
+      {value.link && value.link.url && (
+        <div className="block-paper-links">
+          <ExternalLink item={value.link} />
+        </div>
+      )}
+    </article>
+  );
+}
+
+// ─────────────────────────────────────────
+// GalleryBlockView
+// ─────────────────────────────────────────
+
+export function GalleryBlockView({
+  value,
+  props,
+}: {
+  value: GalleryBlockValue;
+  props?: GalleryBlockProps;
+}) {
+  const images = [value.mainImage, value.subImage1, value.subImage2].filter(
+    Boolean
+  ) as string[];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeImage = images[activeIndex] ?? images[0];
+  const isCarousel = props?.layout === "carousel";
+  const layoutClass =
+    props?.layout === "carousel"
+      ? "block-gallery--carousel"
+      : props?.layout === "feature"
+      ? "block-gallery--feature"
+      : "block-gallery--grid";
+
+  const goTo = (index: number) => {
+    if (images.length === 0) return;
+    setActiveIndex((index + images.length) % images.length);
+  };
+
+  return (
+    <div className={`block-view block-gallery ${layoutClass}`}>
+      <div className="block-gallery-copy">
+        {value.title && <h3 className="block-gallery-title">{value.title}</h3>}
+        {value.description && (
+          <p className="block-gallery-desc">{value.description}</p>
+        )}
+      </div>
+      {isCarousel && activeImage && (
+        <div className="block-gallery-carousel">
+          <div className="block-gallery-carousel-stage">
+            <img
+              src={activeImage}
+              alt={value.alt || value.title || "gallery image"}
+              className="block-gallery-carousel-img"
+            />
+            {images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className="block-gallery-nav block-gallery-nav--prev"
+                  aria-label="이전 이미지"
+                  onClick={() => goTo(activeIndex - 1)}
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  className="block-gallery-nav block-gallery-nav--next"
+                  aria-label="다음 이미지"
+                  onClick={() => goTo(activeIndex + 1)}
+                >
+                  ›
+                </button>
+              </>
+            )}
+          </div>
+          {images.length > 1 && (
+            <div className="block-gallery-dots" aria-label="갤러리 이미지 선택">
+              {images.map((image, index) => (
+                <button
+                  key={`${image}-${index}`}
+                  type="button"
+                  className={[
+                    "block-gallery-dot",
+                    activeIndex === index ? "block-gallery-dot--active" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  aria-label={`${index + 1}번째 이미지 보기`}
+                  onClick={() => goTo(index)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {!isCarousel && images.length > 0 && (
+        <div className="block-gallery-images">
+          {images.map((image, index) => (
+            <img
+              key={`${image}-${index}`}
+              src={image}
+              alt={value.alt || value.title || "gallery image"}
+              className="block-gallery-img"
+            />
+          ))}
+        </div>
+      )}
+      {value.caption && (
+        <p className="block-gallery-caption">{value.caption}</p>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────
+// TroubleshootingBlockView
+// ─────────────────────────────────────────
+
+export function TroubleshootingBlockView({
+  value,
+  props,
+}: {
+  value: TroubleshootingBlockValue;
+  props?: TroubleshootingBlockProps;
+}) {
+  const rows = [
+    ["상황", value.context],
+    ["문제", value.problem],
+    ["원인", value.cause],
+    ["해결", value.solution],
+    ...(props?.showResult === false ? [] : [["결과", value.result] as const]),
+  ].filter(([, body]) => body);
+
+  return (
+    <div className="block-view block-troubleshooting">
+      {value.title && (
+        <h3 className="block-troubleshooting-title">{value.title}</h3>
+      )}
+      <div className="block-troubleshooting-rows">
+        {rows.map(([label, body]) => (
+          <div key={label} className="block-troubleshooting-row">
+            <span className="block-troubleshooting-label">{label}</span>
+            <p>{body}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

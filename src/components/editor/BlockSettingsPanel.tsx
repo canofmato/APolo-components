@@ -335,6 +335,26 @@ function PropsSection({
         </SettingSection>
       );
 
+    case "gallery":
+      return (
+        <SettingSection title="Gallery 설정">
+          <SettingRow label="표시 방식">
+            <div className="settings-segmented">
+              {(["grid", "feature", "carousel"] as const).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  className={`settings-seg-btn ${props.layout === mode ? "active" : ""}`}
+                  onClick={() => update("layout", mode)}
+                >
+                  {mode === "grid" ? "그리드" : mode === "feature" ? "강조" : "캐러셀"}
+                </button>
+              ))}
+            </div>
+          </SettingRow>
+        </SettingSection>
+      );
+
     case "section":
       return (
         <SettingSection title="Section 설정">

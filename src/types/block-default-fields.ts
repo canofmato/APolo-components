@@ -73,6 +73,40 @@ export const BLOCK_DEFAULT_FIELDS: Partial<Record<BlockType, BlockField[]>> = {
     { key: "alt", label: "이미지 설명 (alt)", input: "text", group: "content", placeholder: "이미지 설명" },
     { key: "caption", label: "캡션", input: "text", group: "content", placeholder: "이미지 하단 설명 (선택)" },
   ],
+
+  // ─── Paper ───
+  paper: [
+    { key: "title", label: "논문 제목", input: "text", group: "content", placeholder: "논문 제목", validation: { required: true } },
+    { key: "authors", label: "저자", input: "text", group: "content", placeholder: "Author, A. et al." },
+    { key: "venue", label: "학회/저널", input: "text", group: "content", placeholder: "Conference / Journal" },
+    { key: "year", label: "연도", input: "text", group: "content", placeholder: "2024" },
+    { key: "topic", label: "주제", input: "text", group: "content", placeholder: "논문 주제" },
+    { key: "summary", label: "핵심 요약", input: "textarea", group: "content", placeholder: "논문의 핵심 내용을 2~3문장으로 정리" },
+    { key: "takeaway", label: "읽고 이해한 점", input: "textarea", group: "content", placeholder: "내가 이해한 기여점, 방법론, 한계" },
+    { key: "followUpQuestion", label: "후속 질문", input: "textarea", group: "content", placeholder: "더 탐구하고 싶은 질문" },
+    { key: "link", label: "논문 링크", input: "link", group: "content" },
+  ],
+
+  // ─── Gallery ───
+  gallery: [
+    { key: "title", label: "작업물 제목", input: "text", group: "content", placeholder: "작업물 제목", validation: { required: true } },
+    { key: "description", label: "작업 설명", input: "textarea", group: "content", placeholder: "컨셉, 역할, 결과를 간략히 작성" },
+    { key: "mainImage", label: "대표 이미지", input: "imageUpload", group: "content" },
+    { key: "subImage1", label: "보조 이미지 1", input: "imageUpload", group: "content" },
+    { key: "subImage2", label: "보조 이미지 2", input: "imageUpload", group: "content" },
+    { key: "alt", label: "이미지 설명", input: "text", group: "content", placeholder: "작업물 이미지 설명" },
+    { key: "caption", label: "캡션", input: "text", group: "content", placeholder: "이미지 하단 설명" },
+  ],
+
+  // ─── Troubleshooting ───
+  troubleshooting: [
+    { key: "title", label: "트러블슈팅 제목", input: "text", group: "content", placeholder: "예: 중복 예약 발생 문제 해결", validation: { required: true } },
+    { key: "context", label: "상황", input: "textarea", group: "content", placeholder: "문제가 발생한 맥락" },
+    { key: "problem", label: "문제", input: "textarea", group: "content", placeholder: "발생한 문제" },
+    { key: "cause", label: "원인", input: "textarea", group: "content", placeholder: "분석한 원인" },
+    { key: "solution", label: "해결", input: "textarea", group: "content", placeholder: "적용한 해결 방법" },
+    { key: "result", label: "결과", input: "textarea", group: "content", placeholder: "개선 결과 또는 배운 점" },
+  ],
 };
 
 /**

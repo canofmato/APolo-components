@@ -18,6 +18,9 @@ import type {
   ContactBlock,
   TextBlock,
   ImageBlock,
+  PaperBlock,
+  GalleryBlock,
+  TroubleshootingBlock,
 } from "./template-blocks.types";
 import type { AnyBlock } from "./portfolio.types";
 
@@ -151,6 +154,33 @@ export const BLOCK_REGISTRY: Record<BlockType, BlockRegistryEntry> = {
     allowsChildren: false,
     defaultLayout: { span: 12, padding: 0 },
   },
+  paper: {
+    type: "paper",
+    category: "template",
+    label: "Paper",
+    description: "읽은 논문과 핵심 요약, 후속 질문을 정리하는 영역",
+    repeatable: true,
+    allowsChildren: false,
+    defaultLayout: { span: 12, padding: 24 },
+  },
+  gallery: {
+    type: "gallery",
+    category: "template",
+    label: "Gallery",
+    description: "디자인 작업물 이미지를 크게 보여주는 갤러리 영역",
+    repeatable: true,
+    allowsChildren: false,
+    defaultLayout: { span: 12, padding: 24 },
+  },
+  troubleshooting: {
+    type: "troubleshooting",
+    category: "template",
+    label: "Troubleshooting",
+    description: "문제, 원인, 해결, 결과를 구조화해 보여주는 영역",
+    repeatable: true,
+    allowsChildren: false,
+    defaultLayout: { span: 12, padding: 24 },
+  },
 };
 
 // ─────────────────────────────────────────
@@ -203,6 +233,20 @@ export function isTextBlock(block: AnyBlock): block is TextBlock {
 
 export function isImageBlock(block: AnyBlock): block is ImageBlock {
   return block.type === "image";
+}
+
+export function isPaperBlock(block: AnyBlock): block is PaperBlock {
+  return block.type === "paper";
+}
+
+export function isGalleryBlock(block: AnyBlock): block is GalleryBlock {
+  return block.type === "gallery";
+}
+
+export function isTroubleshootingBlock(
+  block: AnyBlock
+): block is TroubleshootingBlock {
+  return block.type === "troubleshooting";
 }
 
 export function isLayoutBlock(block: AnyBlock): boolean {

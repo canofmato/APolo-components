@@ -219,7 +219,7 @@ function createDefaultBlock(type: BlockType, order: number): AnyBlock {
     },
     style: { variant: "default", emphasis: "medium" },
     repeatable: entry.repeatable,
-    props: {},
+    props: getDefaultBlockProps(type),
     agentMeta: {
       aliases: [type],
       canMove: true,
@@ -229,6 +229,13 @@ function createDefaultBlock(type: BlockType, order: number): AnyBlock {
       editableLayoutKeys: ["span", "order", "padding"],
     },
   } as AnyBlock);
+}
+
+function getDefaultBlockProps(type: BlockType): object {
+  if (type === "gallery") {
+    return { layout: "carousel" };
+  }
+  return {};
 }
 
 function normalizeBlockDefaults(block: AnyBlock): AnyBlock {
@@ -246,7 +253,7 @@ function normalizeBlockDefaults(block: AnyBlock): AnyBlock {
     },
     style: block.style ?? { variant: "default", emphasis: "medium" },
     repeatable: block.repeatable ?? entry.repeatable,
-    props: block.props ?? {},
+    props: { ...getDefaultBlockProps(block.type), ...(block.props ?? {}) },
     agentMeta: {
       aliases: block.agentMeta?.aliases ?? [block.type],
       canMove: block.agentMeta?.canMove ?? true,
