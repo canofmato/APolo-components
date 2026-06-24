@@ -288,7 +288,7 @@ function PropsSection({
           <SettingRow label="썸네일 표시">
             <input
               type="checkbox"
-              checked={!!(props.showThumbnail)}
+              checked={props.showThumbnail !== false}
               onChange={(e) => update("showThumbnail", e.target.checked)}
             />
           </SettingRow>

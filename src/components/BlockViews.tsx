@@ -184,9 +184,9 @@ export function ProjectBlockView({
 
   return (
     <div className={`block-view block-project ${displayClass}`}>
-      {props?.showThumbnail && value.thumbnail && (
+      {props?.showThumbnail !== false && value.thumbnail && (
         <div className="block-project-thumb">
-          <img src={value.thumbnail} alt={value.title} />
+          <img src={value.thumbnail} alt={value.title || "프로젝트 썸네일"} />
         </div>
       )}
       <div className="block-project-body">

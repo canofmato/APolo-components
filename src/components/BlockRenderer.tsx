@@ -89,6 +89,7 @@ function TemplateBlockEditor({
   const fields: BlockField[] = block.fields ?? [];
   if (fields.length === 0) return null;
   const contextValue = (value as Record<string, unknown>) ?? {};
+  const blockPreset = (block.props as { preset?: BlockField["preset"] } | undefined)?.preset;
 
   const handleChange = (key: string, val: unknown) => {
     onContentChange?.(block.id, key, val);
@@ -96,15 +97,22 @@ function TemplateBlockEditor({
 
   return (
     <div className="block-editor-fields">
-      {fields.map((field) => (
-        <FieldRenderer
-          key={field.key}
-          field={field}
-          value={contextValue?.[field.key]}
-          onChange={handleChange}
-          contextValue={contextValue}
-        />
-      ))}
+      {fields.map((field) => {
+        const effectiveField =
+          field.input === "toggleTagSelector" && blockPreset
+            ? { ...field, preset: blockPreset }
+            : field;
+
+        return (
+          <FieldRenderer
+            key={field.key}
+            field={effectiveField}
+            value={contextValue?.[field.key]}
+            onChange={handleChange}
+            contextValue={contextValue}
+          />
+        );
+      })}
     </div>
   );
 }

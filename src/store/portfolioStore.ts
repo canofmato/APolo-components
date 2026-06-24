@@ -202,7 +202,11 @@ function extractContentFromTemplate(
 // 유틸: 새 블록 기본 객체 생성
 // ─────────────────────────────────────────
 
-function createDefaultBlock(type: BlockType, order: number): AnyBlock {
+function createDefaultBlock(
+  type: BlockType,
+  order: number,
+  jobType?: PortfolioTemplate["jobType"]
+): AnyBlock {
   const entry = BLOCK_REGISTRY[type];
   const id = `${type}-${Date.now()}`;
 
@@ -219,7 +223,7 @@ function createDefaultBlock(type: BlockType, order: number): AnyBlock {
     },
     style: { variant: "default", emphasis: "medium" },
     repeatable: entry.repeatable,
-    props: getDefaultBlockProps(type),
+    props: getDefaultBlockProps(type, jobType),
     agentMeta: {
       aliases: [type],
       canMove: true,
@@ -228,17 +232,32 @@ function createDefaultBlock(type: BlockType, order: number): AnyBlock {
       canDelete: !["hero", "contact"].includes(type),
       editableLayoutKeys: ["span", "order", "padding"],
     },
-  } as AnyBlock);
+  } as AnyBlock, jobType);
 }
 
-function getDefaultBlockProps(type: BlockType): object {
+function getDefaultBlockProps(
+  type: BlockType,
+  jobType?: PortfolioTemplate["jobType"]
+): object {
+  const preset =
+    jobType === "cv" ? "research" : jobType === "developer" || jobType === "designer" ? jobType : undefined;
+
   if (type === "gallery") {
     return { layout: "carousel" };
+  }
+  if (type === "project") {
+    return { showThumbnail: true, ...(preset ? { preset } : {}) };
+  }
+  if (type === "skills") {
+    return { display: "tag", ...(preset ? { preset } : {}) };
   }
   return {};
 }
 
-function normalizeBlockDefaults(block: AnyBlock): AnyBlock {
+function normalizeBlockDefaults(
+  block: AnyBlock,
+  jobType?: PortfolioTemplate["jobType"]
+): AnyBlock {
   const entry = BLOCK_REGISTRY[block.type];
 
   return injectDefaultFields({
@@ -253,7 +272,7 @@ function normalizeBlockDefaults(block: AnyBlock): AnyBlock {
     },
     style: block.style ?? { variant: "default", emphasis: "medium" },
     repeatable: block.repeatable ?? entry.repeatable,
-    props: { ...getDefaultBlockProps(block.type), ...(block.props ?? {}) },
+    props: { ...getDefaultBlockProps(block.type, jobType), ...(block.props ?? {}) },
     agentMeta: {
       aliases: block.agentMeta?.aliases ?? [block.type],
       canMove: block.agentMeta?.canMove ?? true,
@@ -296,7 +315,9 @@ export const usePortfolioStore = create<PortfolioStore>()(
           const { portfolioTemplate, portfolioContent, renderMeta } = aiResponse;
 
           // fields/agentMeta 없는 블록에 기본 편집 메타 자동 주입
-          portfolioTemplate.blocks = portfolioTemplate.blocks.map(normalizeBlockDefaults) as typeof portfolioTemplate.blocks;
+          portfolioTemplate.blocks = portfolioTemplate.blocks.map((block) =>
+            normalizeBlockDefaults(block, portfolioTemplate.jobType)
+          ) as typeof portfolioTemplate.blocks;
 
           // content가 없으면 template 기반으로 빈 값 자동 생성
           const content =
@@ -366,7 +387,11 @@ export const usePortfolioStore = create<PortfolioStore>()(
           }
 
           // 새 블록 생성
-          const newBlock = createDefaultBlock(blockType, insertOrder);
+          const newBlock = createDefaultBlock(
+            blockType,
+            insertOrder,
+            state.template.jobType
+          );
 
           // insertOrder 이후 블록들 order + 1
           for (const b of blocks) {

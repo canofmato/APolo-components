@@ -20,6 +20,7 @@ export type AnyBlock = LayoutBlock | TemplateBlock;
 export interface PortfolioTemplate {
   id: string;
   title: string;
+  jobType?: "developer" | "designer" | "cv";
   description?: string;
   version: number;
   previewMode: PreviewMode;

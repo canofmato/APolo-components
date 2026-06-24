@@ -74,6 +74,7 @@ export interface ProfileBlockValue {
 export interface ProjectBlockProps {
   display?: ProjectDisplayMode;
   showThumbnail?: boolean;
+  preset?: "developer" | "designer" | "research" | "default";
 }
 
 export interface ProjectBlock extends BaseBlock {
@@ -113,6 +114,7 @@ export interface ProjectBlockValue {
 
 export interface SkillsBlockProps {
   display?: SkillsDisplayMode;
+  preset?: "developer" | "designer" | "research" | "default";
 }
 
 export interface SkillsBlock extends BaseBlock {
