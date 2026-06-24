@@ -41,7 +41,7 @@ export const BLOCK_DEFAULT_FIELDS: Partial<Record<BlockType, BlockField[]>> = {
   // ─── Skills ───
   skills: [
     { key: "category", label: "카테고리", input: "text", group: "content", placeholder: "Tools / Frontend / etc" },
-    { key: "items", label: "스킬 목록", input: "toggleTagSelector", group: "content", allowCustom: true },
+    { key: "items", label: "스킬 목록", input: "toggleTagSelector", group: "content", allowCustom: true, preset: "designer" },
   ],
 
   // ─── Experience ───

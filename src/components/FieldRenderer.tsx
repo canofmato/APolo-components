@@ -16,6 +16,7 @@ interface FieldRendererProps {
   onChange: (key: string, value: unknown) => void;
   disabled?: boolean;
   readOnly?: boolean;
+  contextValue?: Record<string, unknown>;
 }
 
 // ─────────────────────────────────────────
@@ -325,22 +326,94 @@ const PRESET_TAGS: Record<string, string[]> = {
     "Node.js", "Python", "Java", "Spring", "Django", "FastAPI",
     "TailwindCSS", "CSS", "HTML", "Figma", "Git", "Docker",
   ],
+  developer: [
+    "React", "TypeScript", "JavaScript", "Next.js", "Vue", "Node.js",
+    "Python", "Java", "Spring", "Django", "FastAPI", "MySQL",
+    "PostgreSQL", "MongoDB", "Redis", "Docker", "AWS", "Git",
+  ],
+  designer: [
+    "Figma", "Photoshop", "Illustrator", "InDesign", "After Effects",
+    "Premiere Pro", "Blender", "Framer", "Webflow", "Brand Identity",
+    "UI Design", "UX Research", "Wireframing", "Prototyping",
+    "Design System", "Typography", "Layout", "Graphic Design",
+    "Visual Storytelling", "Presentation Design",
+  ],
+  research: [
+    "Literature Review", "Research Design", "Data Analysis", "Python",
+    "R", "SPSS", "LaTeX", "Academic Writing", "Survey Design",
+    "Experiment Design", "Statistics", "Machine Learning",
+  ],
 };
+
+function inferTagPreset(
+  field: BlockField,
+  contextValue?: Record<string, unknown>
+): keyof typeof PRESET_TAGS {
+  if (field.preset && PRESET_TAGS[field.preset]) return field.preset;
+
+  const contextText = [
+    contextValue?.category,
+    contextValue?.role,
+    contextValue?.title,
+    contextValue?.summary,
+    contextValue?.description,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  if (
+    contextText.includes("design") ||
+    contextText.includes("designer") ||
+    contextText.includes("visual") ||
+    contextText.includes("brand") ||
+    contextText.includes("graphic") ||
+    contextText.includes("figma") ||
+    contextText.includes("ui") ||
+    contextText.includes("ux")
+  ) {
+    return "designer";
+  }
+  if (
+    contextText.includes("research") ||
+    contextText.includes("paper") ||
+    contextText.includes("academic") ||
+    contextText.includes("cv")
+  ) {
+    return "research";
+  }
+  if (
+    contextText.includes("frontend") ||
+    contextText.includes("backend") ||
+    contextText.includes("developer") ||
+    contextText.includes("server") ||
+    contextText.includes("api") ||
+    contextText.includes("stack") ||
+    contextText.includes("tech")
+  ) {
+    return "developer";
+  }
+  if (field.key === "techStack") return "developer";
+
+  return "default";
+}
 
 function ToggleTagSelectorInput({
   field,
   value,
   onChange,
   disabled,
+  contextValue,
 }: {
   field: BlockField;
   value: string[];
   onChange: (v: string[]) => void;
   disabled?: boolean;
+  contextValue?: Record<string, unknown>;
 }) {
   const [customInput, setCustomInput] = useState("");
   const selected = value ?? [];
-  const presets = PRESET_TAGS.default;
+  const presets = PRESET_TAGS[inferTagPreset(field, contextValue)];
 
   const toggle = (tag: string) => {
     onChange(
@@ -680,6 +753,7 @@ export function FieldRenderer({
   onChange,
   disabled,
   readOnly,
+  contextValue,
 }: FieldRendererProps) {
   if (field.visible === false) return null;
 
@@ -766,6 +840,7 @@ export function FieldRenderer({
             value={value as string[]}
             onChange={handleChange}
             disabled={disabled || readOnly}
+            contextValue={contextValue}
           />
         );
 

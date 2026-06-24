@@ -88,6 +88,7 @@ function TemplateBlockEditor({
 }) {
   const fields: BlockField[] = block.fields ?? [];
   if (fields.length === 0) return null;
+  const contextValue = (value as Record<string, unknown>) ?? {};
 
   const handleChange = (key: string, val: unknown) => {
     onContentChange?.(block.id, key, val);
@@ -99,8 +100,9 @@ function TemplateBlockEditor({
         <FieldRenderer
           key={field.key}
           field={field}
-          value={(value as Record<string, unknown>)?.[field.key]}
+          value={contextValue?.[field.key]}
           onChange={handleChange}
+          contextValue={contextValue}
         />
       ))}
     </div>

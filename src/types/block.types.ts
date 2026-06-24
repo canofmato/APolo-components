@@ -141,6 +141,7 @@ export interface BlockField {
   validation?: FieldValidation;
   options?: FieldOption[];       // select / multiSelect용
   allowCustom?: boolean;         // toggleTagSelector용
+  preset?: "developer" | "designer" | "research" | "default"; // toggleTagSelector 기본 후보군
   multiple?: boolean;            // 다중 선택 여부
 }
 
